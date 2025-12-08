@@ -78,17 +78,44 @@ The mindmap includes a toolbar with the following controls:
 
 ## Development
 
+### Prerequisites
+
+- Node.js >= 16
+- pnpm (this is a monorepo using pnpm workspaces)
+
 ### Building the Plugin
 
+**Option 1: Build within the monorepo (recommended)**
+
+From the repository root:
 ```bash
+# Install all dependencies
+pnpm install
+
+# Build the Obsidian plugin specifically
+cd packages/markmap-obsidian
+pnpm run build
+```
+
+**Option 2: Standalone installation**
+
+If you only want to work on the Obsidian plugin:
+```bash
+cd packages/markmap-obsidian
+
 # Install dependencies
-npm install
+pnpm install
 
 # Development mode (auto-rebuild on changes)
-npm run dev
+pnpm run dev
 
 # Production build
-npm run build
+pnpm run build
+```
+
+After building, copy `main.js`, `manifest.json`, and `styles.css` to your Obsidian vault:
+```bash
+cp main.js manifest.json styles.css /path/to/your/vault/.obsidian/plugins/markmap-obsidian/
 ```
 
 ### Project Structure
