@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, MarkdownView, TFile } from 'obsidian';
+import { Plugin, WorkspaceLeaf, MarkdownView } from 'obsidian';
 import { MarkmapView, VIEW_TYPE_MARKMAP } from './view';
 
 export default class MarkmapPlugin extends Plugin {
@@ -6,10 +6,7 @@ export default class MarkmapPlugin extends Plugin {
     console.log('Loading Markmap plugin');
 
     // 注册 Markmap 视图
-    this.registerView(
-      VIEW_TYPE_MARKMAP,
-      (leaf) => new MarkmapView(leaf, this)
-    );
+    this.registerView(VIEW_TYPE_MARKMAP, (leaf) => new MarkmapView(leaf, this));
 
     // 添加功能区图标
     this.addRibbonIcon('brain', 'Open Markmap', () => {
@@ -22,7 +19,7 @@ export default class MarkmapPlugin extends Plugin {
       name: 'Open Markmap view',
       callback: () => {
         this.activateView();
-      }
+      },
     });
 
     // 添加命令：预览当前文件的 Markmap
@@ -38,7 +35,7 @@ export default class MarkmapPlugin extends Plugin {
           return true;
         }
         return false;
-      }
+      },
     });
 
     // 监听文件切换事件
@@ -50,7 +47,7 @@ export default class MarkmapPlugin extends Plugin {
             leaf.view.updateMarkmap();
           }
         });
-      })
+      }),
     );
 
     // 监听编辑器变化
@@ -62,7 +59,7 @@ export default class MarkmapPlugin extends Plugin {
             leaf.view.updateMarkmap();
           }
         });
-      })
+      }),
     );
   }
 

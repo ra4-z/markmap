@@ -111,7 +111,7 @@ export class MarkmapView extends ItemView {
       const { root, features } = this.transformer.transform(content);
 
       // 加载必要的资源（CSS 和 JS）
-      const { styles, scripts } = this.transformer.getUsedAssets(features);
+      const { styles } = this.transformer.getUsedAssets(features);
 
       if (styles) {
         this.loadStyles(styles);
@@ -152,13 +152,17 @@ export class MarkmapView extends ItemView {
     }
 
     // 这里简化处理，实际可能需要异步加载
-    styleEl.textContent = styles.map(url => `@import url("${url}");`).join('\n');
+    styleEl.textContent = styles
+      .map((url) => `@import url("${url}");`)
+      .join('\n');
   }
 
   private showPlaceholder() {
     if (!this.containerDiv) return;
 
-    let placeholder = this.containerDiv.querySelector('.markmap-placeholder') as HTMLDivElement;
+    let placeholder = this.containerDiv.querySelector(
+      '.markmap-placeholder',
+    ) as HTMLDivElement;
     if (!placeholder) {
       placeholder = this.containerDiv.createDiv({
         cls: 'markmap-placeholder',
@@ -179,7 +183,9 @@ export class MarkmapView extends ItemView {
 
   private hidePlaceholder() {
     if (!this.containerDiv) return;
-    const placeholder = this.containerDiv.querySelector('.markmap-placeholder') as HTMLDivElement;
+    const placeholder = this.containerDiv.querySelector(
+      '.markmap-placeholder',
+    ) as HTMLDivElement;
     if (placeholder) {
       placeholder.style.display = 'none';
     }
@@ -188,7 +194,9 @@ export class MarkmapView extends ItemView {
   private showError(error: any) {
     if (!this.containerDiv) return;
 
-    let errorDiv = this.containerDiv.querySelector('.markmap-error') as HTMLDivElement;
+    let errorDiv = this.containerDiv.querySelector(
+      '.markmap-error',
+    ) as HTMLDivElement;
     if (!errorDiv) {
       errorDiv = this.containerDiv.createDiv({
         cls: 'markmap-error',
