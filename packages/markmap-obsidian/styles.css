@@ -1,0 +1,114 @@
+/* Markmap Plugin Styles */
+
+.markmap-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--background-primary);
+}
+
+.markmap-container svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 工具栏样式 */
+.mm-toolbar {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: var(--shadow-s);
+}
+
+.mm-toolbar-item {
+  display: inline-block;
+  margin: 2px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  color: var(--text-normal);
+  transition: background-color 0.2s;
+}
+
+.mm-toolbar-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.mm-toolbar-item svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Markmap 节点样式 */
+.markmap-node {
+  cursor: pointer;
+}
+
+.markmap-node-circle {
+  fill: var(--interactive-accent);
+  stroke: var(--background-primary);
+  stroke-width: 1.5px;
+}
+
+.markmap-node-text {
+  fill: var(--text-normal);
+  font-family: var(--font-interface);
+  font-size: 14px;
+}
+
+.markmap-link {
+  fill: none;
+  stroke: var(--background-modifier-border);
+  stroke-width: 1.5px;
+}
+
+/* 占位符样式 */
+.markmap-placeholder {
+  display: none;
+}
+
+.markmap-error {
+  display: none;
+  padding: 16px;
+}
+
+/* 深色模式适配 */
+.theme-dark .markmap-node-circle {
+  stroke: var(--background-secondary);
+}
+
+/* 适配 Obsidian 的链接颜色 */
+.markmap a {
+  color: var(--text-accent);
+  text-decoration: none;
+}
+
+.markmap a:hover {
+  text-decoration: underline;
+}
+
+/* 代码块样式 */
+.markmap code {
+  background: var(--code-background);
+  color: var(--code-normal);
+  font-family: var(--font-monospace);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* 强调文本 */
+.markmap strong {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.markmap em {
+  font-style: italic;
+}

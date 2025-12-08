@@ -1,0 +1,10 @@
+{
+  "id": "markmap-obsidian",
+  "name": "Markmap",
+  "version": "0.1.0",
+  "minAppVersion": "0.15.0",
+  "description": "Visualize your Markdown as mindmaps with markmap",
+  "author": "gera2ld",
+  "authorUrl": "https://github.com/markmap/markmap",
+  "isDesktopOnly": false
+}
