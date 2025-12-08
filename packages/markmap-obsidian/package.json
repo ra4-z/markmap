@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Obsidian plugin for markmap - visualize Markdown as mindmaps",
   "main": "main.js",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
