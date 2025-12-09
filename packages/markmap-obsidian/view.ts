@@ -14,6 +14,7 @@ export class MarkmapView extends ItemView {
   private containerDiv: HTMLDivElement | null = null;
   private updateTimeout: NodeJS.Timeout | null = null;
   private svgObserver: MutationObserver | null = null;
+  private lastContent: string | null = null; // 缓存上一次的内容
 
   constructor(leaf: WorkspaceLeaf, plugin: MarkmapPlugin) {
     super(leaf);
@@ -112,9 +113,17 @@ export class MarkmapView extends ItemView {
       const content = await this.getActiveMarkdownContent();
 
       if (!content) {
+        // 如果没有获取到内容，尝试使用缓存的内容
+        if (this.lastContent) {
+          // 使用缓存内容继续显示，不显示占位符
+          return;
+        }
         this.showPlaceholder();
         return;
       }
+
+      // 缓存当前内容
+      this.lastContent = content;
 
       // 转换 Markdown 到 Markmap 数据
       const { root, features } = this.transformer.transform(content);
