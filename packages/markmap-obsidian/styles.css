@@ -69,31 +69,19 @@
   stroke-width: 1.5px;
 }
 
-/* SVG 内的文字元素 */
-.markmap-container svg text {
+/* 强制所有 SVG 文本元素使用主题颜色 */
+.markmap-container svg text,
+.markmap-container svg tspan {
   fill: var(--text-normal) !important;
 }
 
-.markmap-container svg a {
-  fill: var(--text-accent);
-}
-
-/* 深色模式下的文字 */
-.theme-dark .markmap-container svg text {
-  fill: var(--text-normal) !important;
-}
-
-.theme-dark .markmap-container svg .markmap-foreign {
+/* foreignObject 中的 HTML 内容 */
+.markmap-container svg foreignObject {
   color: var(--text-normal);
 }
 
-/* 浅色模式下的文字 */
-.theme-light .markmap-container svg text {
-  fill: var(--text-normal) !important;
-}
-
-.theme-light .markmap-container svg .markmap-foreign {
-  color: var(--text-normal);
+.markmap-container svg foreignObject * {
+  color: inherit;
 }
 
 /* 占位符样式 */

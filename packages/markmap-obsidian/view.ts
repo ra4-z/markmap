@@ -13,7 +13,6 @@ export class MarkmapView extends ItemView {
   private svgEl: SVGSVGElement | null = null;
   private containerDiv: HTMLDivElement | null = null;
   private updateTimeout: NodeJS.Timeout | null = null;
-  private themeObserver: MutationObserver | null = null;
 
   constructor(leaf: WorkspaceLeaf, plugin: MarkmapPlugin) {
     super(leaf);
@@ -49,41 +48,22 @@ export class MarkmapView extends ItemView {
     this.svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svgEl.style.width = '100%';
     this.svgEl.style.height = '100%';
-    this.svgEl.style.position = 'relative';
-    this.svgEl.style.zIndex = '1';
-    this.svgEl.setAttribute('class', 'markmap-svg');
     this.containerDiv.appendChild(this.svgEl);
 
     // 初始化 markmap
-    this.createMarkmap();
+    this.markmap = Markmap.create(this.svgEl, {
+      colorFreezeLevel: 2,
+      duration: 500,
+      maxWidth: 300,
+      spacingVertical: 10,
+      spacingHorizontal: 80,
+      autoFit: true,
+      fitRatio: 0.95,
+    });
 
     // 添加工具栏
-    const toolbar = Toolbar.create(this.markmap!);
+    const toolbar = Toolbar.create(this.markmap);
     toolbar.attach(this.containerDiv);
-
-    // 监听主题变化
-    this.themeObserver = new MutationObserver(() => {
-      // 主题切换时重新创建 markmap
-      if (this.svgEl && this.containerDiv && this.markmap) {
-        const oldMarkmap = this.markmap;
-        this.createMarkmap();
-
-        // 重新添加工具栏
-        const toolbar = Toolbar.create(this.markmap!);
-        toolbar.attach(this.containerDiv);
-
-        // 销毁旧的 markmap
-        oldMarkmap.destroy();
-
-        // 重新渲染当前内容
-        this.updateMarkmap();
-      }
-    });
-
-    this.themeObserver.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
 
     // 渲染初始内容
     await this.updateMarkmap();
@@ -94,50 +74,12 @@ export class MarkmapView extends ItemView {
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
     }
-    if (this.themeObserver) {
-      this.themeObserver.disconnect();
-      this.themeObserver = null;
-    }
     if (this.markmap) {
       this.markmap.destroy();
       this.markmap = null;
     }
     this.svgEl = null;
     this.containerDiv = null;
-  }
-
-  private createMarkmap() {
-    if (!this.svgEl) return;
-
-    const isDark = document.body.classList.contains('theme-dark');
-    this.markmap = Markmap.create(this.svgEl, {
-      color: isDark
-        ? [
-            '#8b5cf6',
-            '#06b6d4',
-            '#10b981',
-            '#f59e0b',
-            '#ef4444',
-            '#ec4899',
-            '#6366f1',
-          ]
-        : [
-            '#7c3aed',
-            '#0891b2',
-            '#059669',
-            '#d97706',
-            '#dc2626',
-            '#db2777',
-            '#4f46e5',
-          ],
-      colorFreezeLevel: 2,
-      duration: 500,
-      maxWidth: 300,
-      spacingVertical: 10,
-      spacingHorizontal: 80,
-      autoFit: true,
-      fitRatio: 0.95,
-    });
   }
 
   async updateMarkmap() {
@@ -216,12 +158,7 @@ export class MarkmapView extends ItemView {
   }
 
   private showPlaceholder() {
-    if (!this.containerDiv || !this.svgEl) return;
-
-    // 清空 SVG 内容但不隐藏
-    while (this.svgEl.firstChild) {
-      this.svgEl.removeChild(this.svgEl.firstChild);
-    }
+    if (!this.containerDiv) return;
 
     let placeholder = this.containerDiv.querySelector(
       '.markmap-placeholder',
@@ -236,7 +173,6 @@ export class MarkmapView extends ItemView {
       placeholder.style.transform = 'translate(-50%, -50%)';
       placeholder.style.textAlign = 'center';
       placeholder.style.color = 'var(--text-muted)';
-      placeholder.style.zIndex = '10';
       placeholder.innerHTML = `
         <div style="font-size: 48px; margin-bottom: 16px;">🧠</div>
         <div style="font-size: 16px;">Open a Markdown file to view as Markmap</div>
@@ -247,7 +183,6 @@ export class MarkmapView extends ItemView {
 
   private hidePlaceholder() {
     if (!this.containerDiv) return;
-
     const placeholder = this.containerDiv.querySelector(
       '.markmap-placeholder',
     ) as HTMLDivElement;
