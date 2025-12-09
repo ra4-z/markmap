@@ -51,6 +51,7 @@ export class MarkmapView extends ItemView {
     this.svgEl.style.height = '100%';
     this.svgEl.style.position = 'relative';
     this.svgEl.style.zIndex = '1';
+    this.svgEl.setAttribute('class', 'markmap-svg');
     this.containerDiv.appendChild(this.svgEl);
 
     // 初始化 markmap
@@ -63,7 +64,7 @@ export class MarkmapView extends ItemView {
     // 监听主题变化
     this.themeObserver = new MutationObserver(() => {
       // 主题切换时重新创建 markmap
-      if (this.svgEl && this.containerDiv) {
+      if (this.svgEl && this.containerDiv && this.markmap) {
         const oldMarkmap = this.markmap;
         this.createMarkmap();
 
@@ -72,9 +73,7 @@ export class MarkmapView extends ItemView {
         toolbar.attach(this.containerDiv);
 
         // 销毁旧的 markmap
-        if (oldMarkmap) {
-          oldMarkmap.destroy();
-        }
+        oldMarkmap.destroy();
 
         // 重新渲染当前内容
         this.updateMarkmap();
@@ -219,8 +218,10 @@ export class MarkmapView extends ItemView {
   private showPlaceholder() {
     if (!this.containerDiv || !this.svgEl) return;
 
-    // 隐藏 SVG
-    this.svgEl.style.display = 'none';
+    // 清空 SVG 内容但不隐藏
+    while (this.svgEl.firstChild) {
+      this.svgEl.removeChild(this.svgEl.firstChild);
+    }
 
     let placeholder = this.containerDiv.querySelector(
       '.markmap-placeholder',
@@ -235,7 +236,7 @@ export class MarkmapView extends ItemView {
       placeholder.style.transform = 'translate(-50%, -50%)';
       placeholder.style.textAlign = 'center';
       placeholder.style.color = 'var(--text-muted)';
-      placeholder.style.zIndex = '0';
+      placeholder.style.zIndex = '10';
       placeholder.innerHTML = `
         <div style="font-size: 48px; margin-bottom: 16px;">🧠</div>
         <div style="font-size: 16px;">Open a Markdown file to view as Markmap</div>
@@ -245,10 +246,7 @@ export class MarkmapView extends ItemView {
   }
 
   private hidePlaceholder() {
-    if (!this.containerDiv || !this.svgEl) return;
-
-    // 显示 SVG
-    this.svgEl.style.display = 'block';
+    if (!this.containerDiv) return;
 
     const placeholder = this.containerDiv.querySelector(
       '.markmap-placeholder',
