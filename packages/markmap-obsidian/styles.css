@@ -69,9 +69,27 @@
   stroke-width: 1.5px;
 }
 
-/* 强制所有 SVG 文本元素使用主题颜色 */
+/* 强制所有 SVG 文本元素使用主题颜色 - 增强优先级 */
 .markmap-container svg text,
 .markmap-container svg tspan {
+  fill: var(--text-normal) !important;
+}
+
+.markmap-container svg g text,
+.markmap-container svg g tspan {
+  fill: var(--text-normal) !important;
+}
+
+/* 针对markmap特定类 */
+svg.markmap text,
+svg.markmap tspan,
+.markmap-container g.markmap-node text {
+  fill: var(--text-normal) !important;
+}
+
+/* 针对Obsidian插件的SVG */
+svg.markmap-svg-obsidian text,
+svg.markmap-svg-obsidian tspan {
   fill: var(--text-normal) !important;
 }
 

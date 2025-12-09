@@ -13,6 +13,7 @@ export class MarkmapView extends ItemView {
   private svgEl: SVGSVGElement | null = null;
   private containerDiv: HTMLDivElement | null = null;
   private updateTimeout: NodeJS.Timeout | null = null;
+  private svgObserver: MutationObserver | null = null;
 
   constructor(leaf: WorkspaceLeaf, plugin: MarkmapPlugin) {
     super(leaf);
@@ -48,6 +49,7 @@ export class MarkmapView extends ItemView {
     this.svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svgEl.style.width = '100%';
     this.svgEl.style.height = '100%';
+    this.svgEl.classList.add('markmap-svg-obsidian');
     this.containerDiv.appendChild(this.svgEl);
 
     // 初始化 markmap
@@ -65,6 +67,9 @@ export class MarkmapView extends ItemView {
     const toolbar = Toolbar.create(this.markmap);
     toolbar.attach(this.containerDiv);
 
+    // 设置SVG变化监听
+    this.setupSvgObserver();
+
     // 渲染初始内容
     await this.updateMarkmap();
   }
@@ -73,6 +78,10 @@ export class MarkmapView extends ItemView {
     // 清理
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
+    }
+    if (this.svgObserver) {
+      this.svgObserver.disconnect();
+      this.svgObserver = null;
     }
     if (this.markmap) {
       this.markmap.destroy();
@@ -120,6 +129,9 @@ export class MarkmapView extends ItemView {
       // 渲染 markmap
       this.markmap.setData(root);
       this.markmap.fit();
+
+      // 应用主题颜色到文本元素
+      this.applyThemeColors();
 
       // 隐藏占位符
       this.hidePlaceholder();
@@ -189,6 +201,43 @@ export class MarkmapView extends ItemView {
     if (placeholder) {
       placeholder.style.display = 'none';
     }
+  }
+
+  private setupSvgObserver() {
+    if (!this.svgEl) return;
+
+    // 创建观察器监听SVG内容变化
+    this.svgObserver = new MutationObserver(() => {
+      this.applyThemeColors();
+    });
+
+    // 开始观察SVG的子元素变化
+    this.svgObserver.observe(this.svgEl, {
+      childList: true,
+      subtree: true,
+      attributes: false,
+    });
+  }
+
+  private applyThemeColors() {
+    if (!this.svgEl) return;
+
+    // 获取当前主题的文字颜色
+    const textColor = getComputedStyle(document.body).getPropertyValue(
+      '--text-normal',
+    );
+
+    // 强制设置所有文本元素的颜色
+    const textElements = this.svgEl.querySelectorAll('text, tspan');
+    textElements.forEach((el) => {
+      (el as SVGElement).style.fill = textColor;
+    });
+
+    // 设置 foreignObject 中的颜色
+    const foreignObjects = this.svgEl.querySelectorAll('foreignObject');
+    foreignObjects.forEach((el) => {
+      (el as SVGForeignObjectElement).style.color = textColor;
+    });
   }
 
   private showError(error: any) {
